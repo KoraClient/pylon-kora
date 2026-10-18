@@ -46,3 +46,12 @@ Every change, newest last:
 - 2026-10-18: build setup. LF line endings in every checkout (`.gitattributes`), JDK 21's compiler as upstream's release
   workflow uses (with both, the `v0.2.2` tag builds the published `pylon-0.2.2.jar` byte for byte), the Gradle wrapper
   9.8.1, the fork's coordinates (`gradle.properties`).
+- 2026-10-18: GL call routing (`pl.tomgirl.pylon.render.GlRouting`, `GlRouteTransformer`, one line in
+  `fabric/MixinTransformer`). A renderer installs a router once, before the classes that call OpenGL load; after the
+  mixins, Pylon's Fabric transformer then rewrites each loaded class's static calls into `org/lwjgl/opengl` classes as
+  the router says: to the same method in another class, to nothing, or to a report. With no router (the default) every
+  class is loaded as before.
+- 2026-10-18: a window for Vulkan (`pl.tomgirl.pylon.window.VulkanSurface`, `VulkanPresenter`). A `GpuSurface` that makes
+  the SDL window for Vulkan instead of OpenGL, without a GL context, and hands presenting and VSync to the renderer's
+  presenter; helpers for SDL's Vulkan surface calls on raw handles (no Vulkan bindings in Pylon). Installed through
+  `DisplaySdl.setSurface`, which Pylon already had; without it Pylon makes its OpenGL window as before.

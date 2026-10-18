@@ -3,6 +3,7 @@ package pl.tomgirl.pylon.fabric;
 import org.spongepowered.asm.mixin.transformer.IMixinTransformer;
 import org.spongepowered.asm.transformers.TreeTransformer;
 import pl.tomgirl.pylon.game.GameTransformer;
+import pl.tomgirl.pylon.render.GlRouting;
 
 public class MixinTransformer<T extends TreeTransformer & IMixinTransformer> extends MixinTransformerDelegate<T> {
     MixinTransformer(T delegate) throws Exception {
@@ -24,6 +25,8 @@ public class MixinTransformer<T extends TreeTransformer & IMixinTransformer> ext
             bytecode = transformed;
         }
 
-        return super.transformClassBytes(name, transformedName, bytecode);
+        // Hestia fork (2026-10-18): GL calls routed after the mixins, so the code they merge in is routed too. Without an
+        // installed router the bytes are the mixins' unchanged.
+        return GlRouting.routed(super.transformClassBytes(name, transformedName, bytecode));
     }
 }
