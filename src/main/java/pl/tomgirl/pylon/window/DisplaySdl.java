@@ -43,6 +43,8 @@ public class DisplaySdl {
     private boolean highPixelDensity = false;
 
     private long handle = -1L;
+    /** The window's SDL id: window events from any other window (one made again, being destroyed) are left out. */
+    private int windowId;
     private GpuSurface surface;
     private String title = "";
     private ByteBuffer[] cachedIcons;
@@ -366,7 +368,11 @@ public class DisplaySdl {
 
     private void pollEvents() {
         while (SDL_PollEvent(event)) {
-            switch (event.type()) {
+            int type = event.type();
+            if (type >= SDL_EVENT_WINDOW_FIRST && type <= SDL_EVENT_WINDOW_LAST && windowEvent.windowID() != windowId) {
+                continue;
+            }
+            switch (type) {
                 case SDL_EVENT_QUIT:
                 case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
                     closeRequested = true;
@@ -489,6 +495,8 @@ public class DisplaySdl {
             handle = -1L;
             throw throwable;
         }
+        long created = handle;
+        windowId = MainThread.call(() -> SDL_GetWindowID(created));
 
         setFullscreen(fullscreenDeferred);
         MainThread.run(() -> {
@@ -516,6 +524,54 @@ public class DisplaySdl {
         if (cachedIcons != null) {
             setIcon(cachedIcons);
         }
+    }
+
+    /**
+     * Hestia fork (2026-10-19): makes the window again, windowed, with the same title, size, place and input state, when
+     * the surface can (a Vulkan window: NVIDIA's driver keeps a window that once presented with VSync on a slower,
+     * composited present). Call on the display's thread between frames; whether the window was made again.
+     */
+    public boolean recreateWindow() {
+        if (!isCreated() || surface == null || fullscreen) {
+            return false;
+        }
+        long old = handle;
+        int[] place = MainThread.call(() -> {
+            try (MemoryStack ms = stackPush()) {
+                IntBuffer x = ms.mallocInt(1);
+                IntBuffer y = ms.mallocInt(1);
+                boolean known = SDL_GetWindowPosition(old, x, y);
+                boolean maximized = (SDL_GetWindowFlags(old) & SDL_WINDOW_MAXIMIZED) != 0;
+                return new int[] { known ? x.get(0) : SDL_WINDOWPOS_CENTERED, known ? y.get(0) : SDL_WINDOWPOS_CENTERED, maximized ? 1 : 0 };
+            }
+        });
+        long created = surface.recreateWindow(title, width, height, resizable, place[0], place[1]);
+        if (created == 0) {
+            return false;
+        }
+        handle = created;
+        windowId = MainThread.call(() -> SDL_GetWindowID(created));
+        if (place[2] != 0) {
+            MainThread.run(() -> SDL_MaximizeWindow(created));
+        }
+        if (Mouse.isCreated()) {
+            MouseSdl.instance().windowReplaced(created);
+        }
+        textInputActive = false;
+        textInputX = -1;
+        updateTextInputState();
+        if (cachedIcons != null) {
+            setIcon(cachedIcons);
+        }
+        MainThread.run(() -> {
+            if (SDL_IsMainThread()) {
+                SDL_PumpEvents();
+            }
+            focused = (SDL_GetWindowFlags(created) & SDL_WINDOW_INPUT_FOCUS) != 0;
+        });
+        windowResized = true;
+        resizePending = true;
+        return true;
     }
 
     private void onFramebufferResize(long window, int framebufferWidth, int framebufferHeight) {

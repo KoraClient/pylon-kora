@@ -22,4 +22,13 @@ public interface VulkanPresenter {
 
     /** The display is being destroyed; the window still exists. Release everything made for it. */
     void destroy();
+
+    /**
+     * Hestia fork (2026-10-19): the window is being made again ({@link DisplaySdl#recreateWindow}). Move to
+     * {@code window}, a new SDL window made for Vulkan, still hidden; the old one still exists and is destroyed after
+     * this returns. Called on the display's thread, between frames.
+     */
+    default void windowReplaced(long window) {
+        throw new UnsupportedOperationException("this presenter can't move to a new window");
+    }
 }

@@ -55,3 +55,8 @@ Every change, newest last:
   the SDL window for Vulkan instead of OpenGL, without a GL context, and hands presenting and VSync to the renderer's
   presenter; helpers for SDL's Vulkan surface calls on raw handles (no Vulkan bindings in Pylon). Installed through
   `DisplaySdl.setSurface`, which Pylon already had; without it Pylon makes its OpenGL window as before.
+- 2026-10-19 (`+hestia.2`): the window made again on request (`DisplaySdl.recreateWindow`, `GpuSurface.recreateWindow`,
+  `VulkanPresenter.windowReplaced`, `MouseSdl.windowReplaced`). Windowed only: a new SDL window with the same title, size,
+  place and flags, handed to the presenter, shown and raised, then the old one destroyed; the mouse grab, text input,
+  icon and maximized state carry over. Window events are taken from the current window only (its SDL id). An OpenGL
+  window can't be made again (`GlSurface` keeps the default, which declines); nothing calls it unless a renderer does.

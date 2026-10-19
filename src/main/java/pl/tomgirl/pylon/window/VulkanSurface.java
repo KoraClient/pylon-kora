@@ -39,7 +39,7 @@ public class VulkanSurface implements GpuSurface {
             throw new IllegalStateException("Surface has already been created");
         }
 
-        MainThread.run(() -> createSdlWindow(title, width, height, resizable));
+        MainThread.run(() -> createSdlWindow(title, width, height, resizable, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED));
         try {
             presenter.windowCreated(window);
             presenterCreated = true;
@@ -50,11 +50,39 @@ public class VulkanSurface implements GpuSurface {
         }
     }
 
-    private void createSdlWindow(String title, int width, int height, boolean resizable) {
+    /**
+     * Hestia fork (2026-10-19): a new window for the presenter ({@link VulkanPresenter#windowReplaced}), shown and raised
+     * before the old one is destroyed, so the game keeps the foreground. If the presenter can't move, the old window
+     * stays.
+     */
+    @Override
+    public long recreateWindow(String title, int width, int height, boolean resizable, int x, int y) {
+        long old = window;
+        if (old == 0 || !presenterCreated) {
+            return 0;
+        }
+        MainThread.run(() -> createSdlWindow(title, width, height, resizable, x, y));
+        long created = window;
+        try {
+            presenter.windowReplaced(created);
+        } catch (RuntimeException | Error throwable) {
+            window = old;
+            MainThread.run(() -> SDL_DestroyWindow(created));
+            throw throwable;
+        }
+        MainThread.run(() -> {
+            SDL_ShowWindow(created);
+            SDL_RaiseWindow(created);
+            SDL_DestroyWindow(old);
+        });
+        return created;
+    }
+
+    private void createSdlWindow(String title, int width, int height, boolean resizable, int x, int y) {
         int properties = (int) check(SDL_CreateProperties());
         try {
-            check(SDL_SetNumberProperty(properties, SDL_PROP_WINDOW_CREATE_X_NUMBER, SDL_WINDOWPOS_CENTERED));
-            check(SDL_SetNumberProperty(properties, SDL_PROP_WINDOW_CREATE_Y_NUMBER, SDL_WINDOWPOS_CENTERED));
+            check(SDL_SetNumberProperty(properties, SDL_PROP_WINDOW_CREATE_X_NUMBER, x));
+            check(SDL_SetNumberProperty(properties, SDL_PROP_WINDOW_CREATE_Y_NUMBER, y));
             check(SDL_SetNumberProperty(properties, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, width));
             check(SDL_SetNumberProperty(properties, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, height));
             check(SDL_SetStringProperty(properties, SDL_PROP_WINDOW_CREATE_TITLE_STRING, title));
