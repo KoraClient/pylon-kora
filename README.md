@@ -33,13 +33,13 @@ dependencies {
 }
 ```
 
-## Hestia's fork
-This branch (`hestia`) is a fork of Pylon 0.2.2 (tag `v0.2.2`, e58525d) for Kora, the Hestia Minecraft 1.8.9 client,
+## Kora's fork
+This branch (`kora`) is a fork of Pylon 0.2.2 (tag `v0.2.2`, e58525d) for Kora, the owner's Minecraft 1.8.9 client,
 under Pylon's own license, the GNU LGPL 3.0 only (`LICENSE.md`). It adds what a renderer other than OpenGL needs and
 changes nothing while no such renderer is installed: the mod id stays `pylon`, and the fork and upstream Pylon can
 replace each other.
 
-Coordinates `com.furiah.hestia:pylon-hestia:<upstream version>+hestia.<n>`. Build with `gradlew build
+Coordinates `gg.kora:pylon-kora:<upstream version>+kora.<n>` (`com.furiah.hestia:pylon-hestia:...+hestia.<n>` before the rebrand). Build with `gradlew build
 publishToMavenLocal`; it needs a JDK 21 for the compiler (a Gradle toolchain) and makes the same jar on every machine.
 
 Every change, newest last:
@@ -60,3 +60,5 @@ Every change, newest last:
   place and flags, handed to the presenter, shown and raised, then the old one destroyed; the mouse grab, text input,
   icon and maximized state carry over. Window events are taken from the current window only (its SDL id). An OpenGL
   window can't be made again (`GlSurface` keeps the default, which declines); nothing calls it unless a renderer does.
+- 2026-11-19 (`+kora.2`): the client's rebrand (Hestia -> Kora): the coordinates `gg.kora:pylon-kora`, the branch `kora`,
+  the comments. The code is `+hestia.2`'s; the `hestia` branch keeps that build's source.

@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import pl.tomgirl.pylon.Pylon;
 
 /**
- * Hands the game's and mods' OpenGL calls to another implementation (Hestia fork, added 2026-10-18).
+ * Hands the game's and mods' OpenGL calls to another implementation (Kora fork, added 2026-10-18).
  *
  * <p>A renderer that replaces OpenGL (a Vulkan one, for example) installs a {@link Router} once, before any class that
  * calls OpenGL is loaded. From then on, Pylon's class transformer rewrites the static calls into {@code org/lwjgl/opengl}

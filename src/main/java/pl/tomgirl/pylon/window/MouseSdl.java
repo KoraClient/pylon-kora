@@ -75,7 +75,7 @@ public class MouseSdl {
         handle = 0;
     }
 
-    /** Hestia fork (2026-10-19): the display's window was made again; the mouse follows it, grabbed as before. */
+    /** Kora fork (2026-10-19): the display's window was made again; the mouse follows it, grabbed as before. */
     void windowReplaced(long window) {
         handle = window;
         boolean grab = grabbed;

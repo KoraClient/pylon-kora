@@ -25,7 +25,7 @@ public class MixinTransformer<T extends TreeTransformer & IMixinTransformer> ext
             bytecode = transformed;
         }
 
-        // Hestia fork (2026-10-18): GL calls routed after the mixins, so the code they merge in is routed too. Without an
+        // Kora fork (2026-10-18): GL calls routed after the mixins, so the code they merge in is routed too. Without an
         // installed router the bytes are the mixins' unchanged.
         return GlRouting.routed(super.transformClassBytes(name, transformedName, bytecode));
     }

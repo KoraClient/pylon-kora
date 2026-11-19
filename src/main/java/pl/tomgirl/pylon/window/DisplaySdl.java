@@ -527,7 +527,7 @@ public class DisplaySdl {
     }
 
     /**
-     * Hestia fork (2026-10-19): makes the window again, windowed, with the same title, size, place and input state, when
+     * Kora fork (2026-10-19): makes the window again, windowed, with the same title, size, place and input state, when
      * the surface can (a Vulkan window: NVIDIA's driver keeps a window that once presented with VSync on a slower,
      * composited present). Call on the display's thread between frames; whether the window was made again.
      */

@@ -15,7 +15,7 @@ import org.objectweb.asm.Type;
 
 /**
  * Rewrites a class's static calls into {@code org/lwjgl/opengl} classes as the installed {@link GlRouting.Router} says
- * (Hestia fork, added 2026-10-18). A routed call keeps its descriptor, so the stack and the frames stay as they are. An
+ * (Kora fork, added 2026-10-18). A routed call keeps its descriptor, so the stack and the frames stay as they are. An
  * {@link GlRouting#IGNORE} or {@link GlRouting#MISSING} call becomes a call to a small static method added to the same
  * class, one per kind and descriptor. Method handles to GL methods (lambdas, method references) are routed the same way.
  */

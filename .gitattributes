@@ -1,4 +1,4 @@
-# Hestia fork: LF line endings in every checkout, so the jar is the same byte for byte on any machine (resources such as
+# Kora fork: LF line endings in every checkout, so the jar is the same byte for byte on any machine (resources such as
 # pylon.mixins.json go into it as they are checked out).
 * text=auto eol=lf
 *.bat text eol=crlf

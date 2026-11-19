@@ -16,7 +16,7 @@ import static org.lwjgl.system.MemoryUtil.memAddress;
 import static org.lwjgl.system.MemoryUtil.memUTF8;
 
 /**
- * A window for a Vulkan renderer, without an OpenGL context (Hestia fork, added 2026-10-18). Install it with
+ * A window for a Vulkan renderer, without an OpenGL context (Kora fork, added 2026-10-18). Install it with
  * {@link DisplaySdl#setSurface} before {@code Display.create}: the window is made as {@link GlSurface} makes its own
  * (same position, size, title and flags), but for Vulkan, and swapping buffers or setting VSync goes to the
  * {@link VulkanPresenter}. The static helpers take and return raw Vulkan handles, so Pylon needs no Vulkan bindings.
@@ -51,7 +51,7 @@ public class VulkanSurface implements GpuSurface {
     }
 
     /**
-     * Hestia fork (2026-10-19): a new window for the presenter ({@link VulkanPresenter#windowReplaced}), shown and raised
+     * Kora fork (2026-10-19): a new window for the presenter ({@link VulkanPresenter#windowReplaced}), shown and raised
      * before the old one is destroyed, so the game keeps the foreground. If the presenter can't move, the old window
      * stays.
      */

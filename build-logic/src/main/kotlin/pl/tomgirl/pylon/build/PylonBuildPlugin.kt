@@ -56,7 +56,7 @@ class PylonBuildPlugin : Plugin<Project> {
 
         extensions.configure<JavaPluginExtension> {
             withSourcesJar()
-            // Hestia fork: JDK 21's compiler, as upstream's release workflow uses, so the build is reproducible (with
+            // Kora fork: JDK 21's compiler, as upstream's release workflow uses, so the build is reproducible (with
             // it, upstream's 0.2.2 tag builds the published jar byte for byte).
             toolchain.languageVersion.set(org.gradle.jvm.toolchain.JavaLanguageVersion.of(21))
         }
